@@ -143,6 +143,17 @@ class Crawler {
 
   private Map<String, List<String>> getGroupedByTagProblemKeys() {
     ensurePage("https://leetcode.com/problemset/all/");
+    driver.findElement(By.cssSelector("#expand-topic > div")).click();
+    List<WebElement> links = driver.findElements(By.cssSelector("#current-topic-tags a"));
+    List<SidebarItem> items = links.stream()
+            .map(we -> new SidebarItem(we.findElement(By.tagName("span")).getText(), we.getAttribute("href")))
+            .collect(Collectors.toList());
+
+    return parseGroupedProblemKeys(items);
+  }
+
+  private Map<String, List<String>> getGroupedByTagProblemKeys_old() {
+    ensurePage("https://leetcode.com/problemset/all/");
     wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".filterTags .filter-dropdown-button")));
     driver.findElement(By.cssSelector(".filterTags .filter-dropdown-button")).click();
     wait.until(
